@@ -11,6 +11,12 @@ kotlin {
     jvmToolchain(17)
 }
 
+configurations.all {
+    // Avoid stdlib version conflict with the version bundled in IntelliJ
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+}
+
 repositories {
     mavenCentral()
     intellijPlatform {
@@ -29,6 +35,8 @@ dependencies {
 }
 
 intellijPlatform {
+    instrumentCode = false
+
     pluginConfiguration {
         name = providers.gradleProperty("pluginName").get()
         version = providers.gradleProperty("pluginVersion").get()

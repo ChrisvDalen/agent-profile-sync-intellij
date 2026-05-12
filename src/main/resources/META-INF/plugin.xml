@@ -1,0 +1,57 @@
+<idea-plugin>
+    <id>com.chrisvdalen.copilot-agent-sync</id>
+    <name>Copilot Agent Sync</name>
+    <vendor email="chris@chrisvdalen.com" url="https://github.com/chrisvdalen">Chris van Dalen</vendor>
+
+    <description><![CDATA[
+        <p>Synchronizes shared GitHub Copilot agent and instruction files into your project.</p>
+        <p>After syncing, GitHub Copilot Chat will automatically discover the agents under
+        <b>Copilot Chat → Agent dropdown → Configure Agents</b>.</p>
+        <br/>
+        <p>Creates the following structure in your repository:</p>
+        <pre>
+.github/
+├── agents/
+│   ├── tech-lead.agent.md
+│   ├── java-spring-reviewer.agent.md
+│   ├── angular-reviewer.agent.md
+│   ├── security-reviewer.agent.md
+│   └── test-engineer.agent.md
+├── instructions/
+│   ├── java.instructions.md
+│   ├── spring-boot.instructions.md
+│   ├── angular.instructions.md
+│   ├── architecture.instructions.md
+│   └── testing.instructions.md
+└── copilot-instructions.md
+AGENTS.md
+        </pre>
+        <p>Use <b>Tools → Copilot Agent Sync → Sync Agent Files</b> to write the files.</p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <b>1.0.0</b> — Initial release: sync predefined agent and instruction files into your project.
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Copilot Agent Sync"
+                           displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <group id="CopilotAgentSync.Menu"
+               text="Copilot Agent Sync"
+               description="GitHub Copilot agent file synchronization"
+               popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+
+            <action id="CopilotAgentSync.SyncAction"
+                    class="com.chrisvdalen.copilot.agentsync.actions.SyncAgentFilesAction"
+                    text="Sync Agent Files"
+                    description="Write GitHub Copilot agent and instruction files to this project"
+                    icon="AllIcons.Actions.Refresh"/>
+        </group>
+    </actions>
+</idea-plugin>

@@ -41,12 +41,12 @@ GitHub Copilot then automatically discovers the agents under **Copilot Chat → 
 
 ### Prerequisites
 - JDK 17+
-- Gradle 8.8 (the wrapper `./gradlew` downloads it automatically)
+- Gradle 8.13 (the wrapper `./gradlew` downloads it automatically)
 
 > **First-time setup**: The `gradle-wrapper.jar` is not committed to this repository.
 > Generate it once with:
 > ```bash
-> gradle wrapper --gradle-version 8.8
+> gradle wrapper
 > ```
 > After that, use `./gradlew` for all commands.
 

@@ -2,36 +2,32 @@ name: Build
 
 on:
   push:
-    branches: [ main, "claude/**" ]
+    branches: [ main, "agent/**", "claude/**" ]
   pull_request:
     branches: [ main ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
-          distribution: 'temurin'
-
-      - name: Set up Gradle 8.13
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.13'
-
-      - name: Generate Gradle wrapper jar
-        run: gradle wrapper
+          distribution: temurin
+          cache: gradle
 
       - name: Build plugin
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon
 
       - name: Upload plugin artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: copilot-agent-sync-intellij-${{ github.sha }}

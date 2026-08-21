@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,18 +20,19 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Set up JDK 17
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '25'
           distribution: temurin
-          cache: gradle
 
-      - name: Build plugin
-        run: ./gradlew build --no-daemon
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Test, build, and verify plugin
+        run: ./gradlew test buildPlugin verifyPlugin --no-daemon --stacktrace
 
       - name: Upload plugin artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           name: copilot-agent-sync-intellij-${{ github.sha }}

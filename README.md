@@ -32,23 +32,16 @@ GitHub Copilot then automatically discovers the agents under **Copilot Chat → 
 | Agent | Purpose |
 |---|---|
 | **Tech Lead** | Architecture guidance, strategic code review |
-| **Java Spring Reviewer** | Java 17+ and Spring Boot 3.x best practices |
-| **Angular Reviewer** | Angular 17+, signals, standalone components |
+| **Java Spring Reviewer** | Java 25 and Spring Boot 4.1 best practices |
+| **Angular Reviewer** | Angular 22, signals, zoneless and standalone patterns |
 | **Security Reviewer** | OWASP Top 10, Spring Security, Angular XSS |
-| **Test Engineer** | Test strategy, JUnit 5, Jest, Playwright |
+| **Test Engineer** | Test strategy, JUnit 6, Vitest, Playwright |
 
 ## Development
 
 ### Prerequisites
-- JDK 17+
-- Gradle 8.13 (the wrapper `./gradlew` downloads it automatically)
-
-> **First-time setup**: The `gradle-wrapper.jar` is not committed to this repository.
-> Generate it once with:
-> ```bash
-> gradle wrapper
-> ```
-> After that, use `./gradlew` for all commands.
+- JDK 25
+- Gradle 9.7.1 (the committed wrapper downloads it automatically)
 
 ### Common tasks
 
@@ -69,8 +62,3 @@ src/main/kotlin/com/chrisvdalen/copilot/agentsync/model/AgentDefinitions.kt
 ```
 
 Edit the string maps in that file to change what gets written to projects.
-
-## License
-
-Copyright © 2026 Chris van Dalen. All rights reserved.
-Proprietary — see LICENSE for terms.

@@ -30,7 +30,7 @@ AGENTS.md
     ]]></description>
 
     <change-notes><![CDATA[
-        <b>1.0.0</b> — Initial release: sync predefined agent and instruction files into your project.
+        <b>2.0.0</b> — Java 25 and IntelliJ IDEA 2026.2 support; generated profiles now target Spring Boot 4.1 and Angular 22.
     ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>

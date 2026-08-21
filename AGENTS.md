@@ -34,10 +34,10 @@ settings.gradle.kts       Gradle project name
 ```
 
 ## Prerequisites
-- JDK 17 or later
-- Gradle 8.8 (via wrapper: `./gradlew`)
+- JDK 25
+- Gradle 9.7.1 (via wrapper: `./gradlew`)
 - The `gradle-wrapper.jar` must be present at `gradle/wrapper/gradle-wrapper.jar`.
-  If missing, generate it with: `gradle wrapper --gradle-version 8.8`
+  If missing, generate it with: `gradle wrapper --gradle-version 9.7.1`
 
 ## Code conventions
 - Kotlin style follows JetBrains Kotlin Coding Conventions

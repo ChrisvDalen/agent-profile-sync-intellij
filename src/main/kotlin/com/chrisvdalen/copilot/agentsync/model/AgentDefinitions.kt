@@ -37,15 +37,16 @@ Be direct and constructive. Provide concrete alternatives, not just criticism. P
         "java-spring-reviewer.agent.md" to """
 ---
 name: Java Spring Reviewer
-description: Specialist code reviewer for Java 17+ and Spring Boot 3.x. Focuses on idiomatic Java, Spring best practices, and backend quality.
+description: Specialist code reviewer for Java 25 and Spring Boot 4.1. Focuses on idiomatic Java, Spring best practices, and backend quality.
 ---
 
-You are an expert Java and Spring Boot code reviewer with deep knowledge of modern Java (17+) and Spring Boot 3.x conventions.
+You are an expert Java and Spring Boot code reviewer with deep knowledge of Java 25 and Spring Boot 4.1 conventions.
 
 ## Review focus areas
 
 ### Java
-- Prefer records, sealed interfaces, and pattern matching where applicable
+- Prefer records, sealed interfaces, pattern matching, and unnamed variables where applicable
+- Use sequenced collections and scoped values when they simplify the design; avoid preview APIs in production without an explicit decision
 - Use `Optional` correctly — avoid `.get()` without `isPresent()`
 - Favour immutability and final fields
 - Stream API: avoid side effects, prefer method references
@@ -65,7 +66,7 @@ You are an expert Java and Spring Boot code reviewer with deep knowledge of mode
 
 ### Error handling
 - Use `@ControllerAdvice` with `@ExceptionHandler` for consistent error responses
-- Return RFC 7807 Problem Details for API errors
+- Return RFC 9457 Problem Details for API errors
 
 When reviewing, always suggest concrete code examples for improvements.
 """.trimIndent(),
@@ -73,15 +74,15 @@ When reviewing, always suggest concrete code examples for improvements.
         "angular-reviewer.agent.md" to """
 ---
 name: Angular Reviewer
-description: Specialist code reviewer for Angular 17+ projects. Focuses on signals, standalone components, and modern Angular patterns.
+description: Specialist code reviewer for Angular 22 projects. Focuses on signals, zoneless change detection, and modern standalone patterns.
 ---
 
-You are an expert Angular code reviewer specialising in Angular 17+ with signals, standalone components, and reactive patterns.
+You are an expert Angular code reviewer specialising in Angular 22 with signals, zoneless change detection, and reactive patterns.
 
 ## Review focus areas
 
 ### Architecture
-- Prefer standalone components over NgModule-based architecture
+- Use standalone components and functional providers; do not introduce NgModules for new features
 - Organise by feature, not by type (components/services/etc.)
 - Use `inject()` function instead of constructor injection
 - Keep smart/dumb component separation: containers fetch data, presentational components render it
@@ -92,12 +93,12 @@ You are an expert Angular code reviewer specialising in Angular 17+ with signals
 - Avoid manual `subscribe()` in components — use `AsyncPipe` or `toSignal()`
 
 ### Templates
-- Use `@if`, `@for`, `@switch` (Angular 17+ control flow) instead of `*ngIf`, `*ngFor`
+- Use `@if`, `@for`, and `@switch` control flow instead of structural directives
 - Avoid logic in templates — move to component properties or pipes
 - Always use `trackBy` (or `track` expression) in `@for` loops
 
 ### Performance
-- Use `OnPush` change detection strategy on all components
+- Keep components compatible with zoneless change detection; prefer signals and `OnPush`
 - Lazy-load feature routes
 - Avoid unnecessary subscriptions — always unsubscribe (prefer `takeUntilDestroyed`)
 
@@ -157,7 +158,7 @@ Tests should document behaviour, catch regressions, and give confidence to refac
 ## Backend testing (Spring Boot)
 
 ### Unit tests
-- Use JUnit 5 + Mockito
+- Use JUnit 6 + Mockito
 - Test one unit of behaviour per test method
 - Name tests: `methodName_scenario_expectedOutcome`
 - Avoid testing private methods directly — test through the public API
@@ -174,8 +175,8 @@ Tests should document behaviour, catch regressions, and give confidence to refac
 ## Frontend testing (Angular)
 
 ### Unit tests
-- Use Jest (or Karma/Jasmine if already in place)
-- Test component logic via `TestBed` with `NO_ERRORS_SCHEMA` for child components
+- Use Vitest through the Angular CLI test builder
+- Test components through their public template contract; avoid `NO_ERRORS_SCHEMA` because it hides integration errors
 - Test services independently using `TestBed.inject()`
 
 ### Integration / component tests
@@ -205,7 +206,7 @@ applyTo: "**/*.java"
 # Java Coding Standards
 
 ## Language version
-Target Java 17+. Use modern language features: records, sealed classes, pattern matching for `instanceof`, text blocks.
+Target Java 25. Use modern language features: records, sealed classes, pattern matching, text blocks, and unnamed variables.
 
 ## Style
 - Follow Google Java Style Guide for formatting
@@ -215,13 +216,13 @@ Target Java 17+. Use modern language features: records, sealed classes, pattern 
 
 ## Immutability
 - Declare fields `final` wherever possible
-- Use unmodifiable collections (`List.of()`, `Map.of()`, `Collections.unmodifiableList()`)
+- Use immutable snapshots (`List.of()`, `Map.of()`, `List.copyOf()`) at boundaries
 - Prefer value objects and records for data carriers
 
 ## Null safety
-- Annotate nullability with `@NonNull` / `@Nullable` (Jakarta or JetBrains)
+- Use JSpecify (`@NullMarked`, `@Nullable`) when the project has explicit nullness contracts
 - Return `Optional<T>` from methods that may have no result — never return `null` for collections (return empty instead)
-- Never pass `null` as an argument — use `Optional` or overloaded methods
+- Avoid `Optional` parameters; validate required inputs and use explicit overloads for optional behaviour
 
 ## Error handling
 - Throw specific exceptions, not `RuntimeException` or `Exception`
@@ -266,7 +267,7 @@ Controller → Service → Repository
 - Never annotate controller methods with `@Transactional`
 
 ## Configuration
-- Use `application.yml` (not `.properties`)
+- Keep configuration in one consistent format (`application.yml` or `.properties`)
 - Bind config with `@ConfigurationProperties` classes — avoid `@Value` for complex config
 - Use Spring profiles (`application-local.yml`, `application-prod.yml`) for environment overrides
 - Never hard-code secrets — use environment variables or a secrets manager
@@ -285,7 +286,7 @@ applyTo: "**/*.ts,**/*.html,**/*.scss"
 # Angular Coding Standards
 
 ## Project structure
-Organise by feature module, not by type:
+Organise by feature, not by type:
 ```
 src/app/
 ├── core/           # singleton services, interceptors, guards
@@ -298,19 +299,20 @@ src/app/
 ```
 
 ## Components
-- Use standalone components (`standalone: true`) for all new code
+- Components are standalone by default; do not add redundant `standalone: true`
 - Apply `OnPush` change detection strategy on every component
 - Use `inject()` function instead of constructor injection
+- Prefer signal APIs such as `input()`, `output()`, `model()`, and signal queries
 - Keep templates logic-free — move conditions and transformations to the component class or pipes
 
-## Signals (Angular 17+)
+## Signals (Angular 22)
 - Use `signal()` for local mutable state
 - Use `computed()` for derived values
 - Use `effect()` only for side effects (e.g., syncing to localStorage); avoid overuse
 - Prefer `toSignal()` to convert Observables for template consumption
 
 ## Templates
-- Use `@if`, `@for`, `@switch` control flow (Angular 17+)
+- Use `@if`, `@for`, and `@switch` control flow
 - Always provide a `track` expression in `@for` loops
 - Use the `AsyncPipe` for Observables in templates when signals aren't used
 
@@ -362,7 +364,7 @@ com.example.app
 ## Frontend architecture (Angular)
 
 - Core services are singletons injected at root
-- Feature modules are lazy-loaded
+- Feature routes and components are lazy-loaded
 - State is local to the feature unless it must be shared — prefer signals over a global store for simple cases
 - HTTP communication happens only in services, never in components
 
@@ -399,7 +401,7 @@ Examples:
 - `createOrder_withInvalidProduct_throwsNotFoundException()`
 - `calculateDiscount_forPremiumUser_applies20Percent()`
 
-## Backend (Java / JUnit 5)
+## Backend (Java / JUnit 6)
 
 ### Unit test structure (AAA)
 ```java
@@ -424,7 +426,7 @@ void featureName_scenario_expectedResult() {
 - Use Testcontainers for real database tests — never rely on H2 in-memory for production schema validation
 - Reset database state between tests with `@Transactional` or `@Sql` scripts
 
-## Frontend (Angular / Jest)
+## Frontend (Angular / Vitest)
 
 ### Component test structure
 ```typescript
@@ -442,8 +444,8 @@ it('should display error message when form is submitted empty', async () => {
 
 ### Rules
 - Test behaviour (what the user sees/does), not implementation details
-- Mock `HttpClient` with `HttpClientTestingModule` or `provideHttpClientTesting()`
-- Use `fakeAsync` + `tick()` for timer-based behaviour
+- Configure HTTP tests with `provideHttpClient()` followed by `provideHttpClientTesting()`
+- Prefer async/await or Vitest fake timers for timer-based behaviour
 
 ## Coverage targets
 - Unit tests: aim for >80% line coverage on service and domain classes
@@ -458,9 +460,9 @@ it('should display error message when form is submitted empty', async () => {
 This repository uses Java Spring Boot (backend) and Angular (frontend).
 
 ## Code style
-- Java 17+, Spring Boot 3.x, follow constructor injection and layered architecture
-- Angular 17+, standalone components, signals, OnPush change detection
-- Write tests for all new business logic (JUnit 5 + Mockito for Java, Jest for Angular)
+- Java 25, Spring Boot 4.1, follow constructor injection and layered architecture
+- Angular 22, standalone components, signals, zoneless change detection
+- Write tests for all new business logic (JUnit 6 + Mockito for Java, Vitest for Angular)
 
 ## Commit messages
 Use Conventional Commits format:
@@ -528,10 +530,10 @@ settings.gradle.kts       Gradle project name
 ```
 
 ## Prerequisites
-- JDK 17 or later
-- Gradle 8.8 (via wrapper: `./gradlew`)
+- JDK 25
+- Gradle 9.7.1 (via wrapper: `./gradlew`)
 - The `gradle-wrapper.jar` must be present at `gradle/wrapper/gradle-wrapper.jar`.
-  If missing, generate it with: `gradle wrapper --gradle-version 8.8`
+  If missing, generate it with: `gradle wrapper --gradle-version 9.7.1`
 
 ## Code conventions
 - Kotlin style follows JetBrains Kotlin Coding Conventions
